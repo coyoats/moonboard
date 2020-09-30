@@ -291,6 +291,6 @@ function updateBalance(add){
 
 function update(){
     if (typeof(address) !== "undefined"){
-    updateBalance(address)
+    updateBalance(address);
 }
 }
