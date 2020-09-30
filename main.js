@@ -1,3 +1,7 @@
+document.getElementById("con").addEventListener("click", function() {
+    attemptConnect();
+  });
+
 if (typeof web3 !== 'undefined') {
     web3 = new Web3(web3.currentProvider);
 
@@ -18,42 +22,40 @@ function attemptConnect() {
       } catch (error) {
           document.getElementById("status").innerHTML = "Connection fail, try again";
       }
+
+
+      if (window.ethereum === undefined) {
+        document.getElementById("con").hidden=true;
+        document.getElementById("status").innerHTML = "Please install Metamask to continue";
+    } 
+    else {
+        if (window.ethereum.networkVersion==="4"){
+          document.getElementById("status").innerHTML = "Connected to Rinkeby! Good to go!";
+          document.getElementById("con").hidden=true;   
+        setInterval(function() {
+        update();
+        }, 3000);
+        ethereum.on('accountsChanged', function(accounts) {
+            if (web3.eth.accounts[0] === undefined) {
+                document.getElementById("con").hidden=false;
+                document.getElementById("status").innerHTML = "Wallet disconnected";
+            } else {
+                updateBalance(web3.eth.accounts[0]);
+            }
+        });
+        }
+        else{
+            document.getElementById("con").hidden=true;
+            document.getElementById("status").innerHTML = "Wrong network! Please set network to Rinkeby in Metamask";
+        }
+    }
+    
   }
 
-  if (window.ethereum === undefined) {
-      document.getElementById("con").hidden=true;
-      document.getElementById("status").innerHTML = "Please install Metamask to continue";
-  } else {
-      if (window.ethereum.networkVersion==="4"){
-      setInterval(function() {
-      update();
-      }, 3000);
-      ethereum.on('accountsChanged', function(accounts) {
-          console.log(accounts[0])
-          if (accounts[0] === undefined) {
-              document.getElementById("con").hidden=false;
-              document.getElementById("reset").hidden = true;
-              document.getElementById("claim").hidden = true;
-              document.getElementById("status").innerHTML = "Wallet disconnected";
-          } else {
-              updateBalance(accounts[0]);
-          }
-      });
-      }
-      else{
-          document.getElementById("con").hidden=true;
-
-          document.getElementById("status").innerHTML = "Wrong network! Please set network to Rinkeby in Metamask";
-
-
-      }
-  }
-  }
-
-var moonAddress = "0xdf82c9014f127243ce1305dfe54151647d74b27a"
-var bidAddress = "0x2d28f511bac4d8692dfaafd517a4c916c946828b"
-
-ercabi = JSON.parse(`[
+function updateBalance(add){
+   
+    address = add
+    ercabi = JSON.parse(`[
         {
             "constant": true,
             "inputs": [],
@@ -276,14 +278,19 @@ ercabi = JSON.parse(`[
         }
     ]`)
 
-boardabi = JSON.parse(`[{"constant":false,"inputs":[{"name":"newMessage","type":"string"},{"name":"newPrice","type":"uint256"}],"name":"set","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"price","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"summoner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"message","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"collect","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"inputs":[{"name":"_summoner","type":"address"},{"name":"_token","type":"address"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"}]`)
+    moonboardabi = JSON.parse(`[{"constant":false,"inputs":[{"name":"newMessage","type":"string"},{"name":"newPrice","type":"uint256"}],"name":"set","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"price","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"summoner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"message","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"collect","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"inputs":[{"name":"_summoner","type":"address"},{"name":"_token","type":"address"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"}]`)
+    
+     MOONaddress = "0xDF82c9014F127243CE1305DFE54151647d74B27A"
+     moonboardAddress = "0x2D28F511bAC4d8692DfaAfD517a4c916C946828b"
+     MOONcontract=new web3.eth.Contract(ercabi, MOONaddress, {from:add, gasPrice:1000000000})
+     moonboardContract = new web3.eth.Contract(moonboardabi, moonboardAddress, {from:add, gasPrice:1000000000})
+     MOONcontract.methods.balanceOf(add).call().then(function(res){moonbalance = res;document.getElementById("moonbalance").innerHTML = "Your MOON balance: "+(res/1000000000000000000);})
+     moonboardContract.methods.message().call().then(function(res){message = res;document.getElementById("message").innerHTML = "<b>Current message: </b>" + res})
+     moonboardContract.methods.price().call().then(function(res){message = res;document.getElementById("price").innerHTML = "<b>Current price: </b>" + (res/1000000000000000000)})
+}
 
-var moonContract = new web3.eth.Contract(ercabi, moonAddress, {from:add, gasPrice:1000000000})
-var boardContract = new web3.eth.Contract(boardabi, bidAddress, {from:add, gasPrice:1000000000})
-
-console.log(boardContract.methods.price().call())
-
-
-
-
-
+function update(){
+    if (typeof(address) !== "undefined"){
+    updateBalance(address)
+}
+}
