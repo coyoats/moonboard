@@ -48,7 +48,8 @@ function attemptConnect() {
             document.getElementById("con").hidden=true;
             document.getElementById("status").innerHTML = "Wrong network! Please set network to Rinkeby in Metamask";
         }
-        
+     
+    }
     
   }
 
