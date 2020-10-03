@@ -308,7 +308,7 @@ function updateBalance(add){
     moonboardabi = JSON.parse(`[{"constant":false,"inputs":[{"name":"newMessage","type":"string"},{"name":"newPrice","type":"uint256"}],"name":"set","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"price","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"summoner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"message","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"collect","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"inputs":[{"name":"_summoner","type":"address"},{"name":"_token","type":"address"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"}]`)
     
      MOONaddress = "0xDF82c9014F127243CE1305DFE54151647d74B27A"
-     moonboardAddress = "0x2AF2952be2B17ab8d07034B65b32D500C5e63888"
+     moonboardAddress = "0x2D28F511bAC4d8692DfaAfD517a4c916C946828b"
      MOONcontract=new web3.eth.Contract(ercabi, MOONaddress, {from:add, gasPrice:1000000000})
      moonboardContract = new web3.eth.Contract(moonboardabi, moonboardAddress, {from:add, gasPrice:1000000000})
      MOONcontract.methods.balanceOf(add).call().then(function(res){moonbalance = res;document.getElementById("moonbalance").innerHTML = "Your MOON balance: "+(res/1000000000000000000);})
