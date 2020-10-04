@@ -11,10 +11,17 @@ document.getElementById("go").addEventListener("click", function() {
         web3.eth.getAccounts().then(function(acc){
         
             accounts = acc;
-            if (MOONcontract.methods.allowance(accounts[0], moonboardContract.options.address).call() < document.getElementById("newPrice").value*1000000000000000000) {
-                MOONcontract.methods.approve(moonboardContract.options.address, "999999999999999999999999").send();
-            }
-            moonboardContract.methods.set(document.getElementById("newMessage").value, newPrice).send();
+            MOONcontract.methods.allowance(accounts[0], moonboardContract.options.address).call().then(function(res){
+
+                if (res < document.getElementById("newPrice").value*1000000000000000000) {
+                    MOONcontract.methods.approve(moonboardContract.options.address, "999999999999999999999999").send();
+                }
+
+                moonboardContract.methods.set(document.getElementById("newMessage").value, newPrice).send();
+                
+            });
+
+            
         })
     }
     else{
